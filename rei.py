@@ -2,12 +2,14 @@
 
 import nmap3
 import requests
+import subprocess
 
 #Variables and API keys
 
 nmap = nmap3.Nmap()
 dnsdumpsterapi = 'REDACTED'
 
+subprocess.run('clear', shell=True)
 print('''
 
  ____  _____ ___ 
