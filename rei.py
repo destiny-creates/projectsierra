@@ -8,12 +8,15 @@ import requests
 nmap = nmap3.Nmap()
 dnsdumpsterapi = 'REDACTED'
 
-print(''' ___  ___  ___ 
-| _ \| __||_ _|
-|   /| _|  | | 
-|_|_\|___||___|
+print('''
 
-               ''')
+ ____  _____ ___ 
+|  _ \| ____|_ _|
+| |_) |  _|  | | 
+|  _ <| |___ | | 
+|_| \_\_____|___|
+
+''')
 print('REI Recon, at your service\n')
 target = input('Target domain:')
 
