@@ -40,6 +40,7 @@ def dumpster():
         pass
     else:
         print('Error connecting to DNSdumpster.')
+        exit()
     data = response.json()
     print('\nA records:\n')
     processdumpster(data['a'])
@@ -72,11 +73,12 @@ def processdns(target):
 def processtopports(target):
     top_ports = nmap.scan_top_ports(target)
     ports_results = next(iter(top_ports))
-    portid = top_ports[ports_results]
-    for port in portid['ports']:
+    port = top_ports[ports_results]
+    for port in port['ports']:
         print('[+] Port: ' + port['portid'])
         print('[+] Protocol: ' + port['protocol'])
         print('[+] State: ' + port['state'])
+        print('[+] Service: ' + port['service']['name'])
         print('-----------------------')
 
 
