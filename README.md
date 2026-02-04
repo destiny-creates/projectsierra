@@ -12,6 +12,7 @@ This project is a fully automated pentesting suite, with only 3 things required 
 *   NMAP
 *   Metasploit
 *   XOR and AES256 encryption
+*   Vulscan
 *   More coming soon!
 
 ## Key Features
