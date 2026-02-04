@@ -62,6 +62,10 @@ def windowslistener():
     winpayload['LPORT'] = PORT
     exploit.execute(payload=winpayload)
 
+def vulscanmodule():
+    target = input('[+] Target URL/IP Address: ')
+    subprocess.run(f'''nmap -sV --script=vulscan/vulscan.nse {target}''', shell=True)
+    print('\nVulscan is based on nmap and can provide false positives. Double check any results.')
 
 menu = Menu('''
 
@@ -76,4 +80,5 @@ menu.add_option('[+] Exploit CVE-2026-2461 telnet root auth bypass', lambda: CVE
 menu.add_option('[+] Create windows payload (MSFVenom)', lambda: windowspayload())
 menu.add_option('[+] Bind windows payload (MSFVenom)', lambda: windowspayloadbind())
 menu.add_option('[+] Listen for windows payload (MSFConsole)', lambda: windowslistener())
+menu.add_option('[+] CVE scanner (vulscan + NMAP)', lambda: vulscanmodule())
 menu.show()
