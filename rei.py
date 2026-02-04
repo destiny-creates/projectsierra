@@ -1,10 +1,11 @@
-#imports
+# imports
+
+import subprocess
 
 import nmap3
 import requests
-import subprocess
 
-#Variables and API keys
+# Variables and API keys
 
 nmap = nmap3.Nmap()
 dnsdumpsterapi = 'REDACTED'
@@ -60,17 +61,17 @@ def processdns(target):
         print('-----------------------')
 
 
-# def processversion(target):
-#     version_results = nmap.nmap_version_detection(target)
-#     ip_address = next(iter(version_results))
-#     version = version_results[ip_address]
-#     for port in version['ports']:
-#         print('[+] Protocol: ' + port['protocol'])
-#         print('[+] Port: ' + port['portid'])
-#         print('[+] State: ' + port['state'])
-#         print('-----------------------')
-#         # for service in port['service']:
-#         #     print('Name: ' + port['service'][service])
+def processversion(target):
+    version_results = nmap.nmap_version_detection(target)
+    ip_address = next(iter(version_results))
+    version = version_results[ip_address]
+    for port in version['ports']:
+        print('[+] Protocol: ' + port['protocol'])
+        print('[+] Port: ' + port['portid'])
+        print('[+] State: ' + port['state'])
+        print('[+] Name: ' + port['service']['name'])
+        print('-----------------------')
+
 
 def processtopports(target):
     top_ports = nmap.scan_top_ports(target)
@@ -89,10 +90,10 @@ def main():
     dumpster()
     print('Running NMAP DNS module\n')
     processdns(target)
+    print('Running NMAP version detection module\n')
+    processversion(target)
     print('Running NMAP top ports module\n')
     processtopports(target)
-    # print('Running NMAP version detection module\n')
-    # processversion(target)
 
 
 if __name__ == '__main__':
