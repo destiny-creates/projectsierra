@@ -25,6 +25,6 @@ This project is a fully automated pentesting suite, with only 3 things required 
 
 **Languages**: Python 3
 
-**Modules**: python3-nmap, requests
+**Modules**: python3-nmap, requests, pymetasploit3
 
 **APIs**: DNSdumpster
