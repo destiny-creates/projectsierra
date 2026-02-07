@@ -23,7 +23,6 @@ print('''
 print('REI Recon, at your service\n')
 target = input('Target domain:')
 
-
 def processdumpster(data):
     for item in data:
         print('[+] Host:' + item['host'])
@@ -83,18 +82,42 @@ def processtopports(target):
         print('[+] State: ' + port['state'])
         print('[+] Service: ' + port['service']['name'])
         print('-----------------------')
-
+def processos(target):
+    os_results = nmap.nmap_os_detection(target)
+    ip_address = next(iter(os_results))
+    os_version = os_results[ip_address]
+    for item in os_version['osmatch']:
+        print('[+] OS: ' + item['name'])
+        print('[+] Family: ' + item['osclass']['osfamily'])
+        print('[+] Type: ' + item['osclass']['type'])
+        print('[+] Generation: ' + item['osclass']['osgen'])
+        print('[+] Accuracy: ' + item['accuracy'])
+        print('-----------------------')
+def xsstest(target):
+    url = f'https://www.{target}/search?'
+    payloads = ['<script>alert(1)</script>', '"><img src=x onerror=alert(1)>']
+    for payload in payloads:
+        params = {'q': payload}
+        r = requests.get(url, params=params)
+        if payload in r.text:
+            print(f'[XSS] Payload reflected: {payload}')
+        else:
+            print(f'[XSS] Not vulnerable to payload: {payload}')
 
 def main():
-    print('Running DNS dumpster module\n')
+    print('\n[+] Running DNS dumpster module\n')
     dumpster()
-    print('Running NMAP DNS module\n')
+    print('\n[+] Running NMAP DNS module\n')
     processdns(target)
-    print('Running NMAP version detection module\n')
+    print('\n[+] Running NMAP version detection module\n')
     processversion(target)
-    print('Running NMAP top ports module\n')
+    print('\n[+] Running NMAP top ports module\n')
     processtopports(target)
-
+    print('\n[+] Running NMAP OS detection module\n')
+    processos(target)
+    print('\n[+] Running XSS module\n')
+    xsstest(target)
+    print('\n[+] Happy hunting :)')
 
 if __name__ == '__main__':
     main()
