@@ -9,6 +9,7 @@ from pymenu import Menu
 
 nmap = nmap3.Nmap()
 dnsdumpsterapi = ''
+wpscanapi = ''
 
 def processdumpster(data):
     for item in data:
@@ -106,6 +107,10 @@ def vulnscanmodule():
     target = input('[+] Target URL/IP Address: ')
     subprocess.run(f'''nmap --script vuln --script-args mincvss+5.0 {target}''', shell=True)
 
+def wpscanmodule():
+    target = input('[+] Target URL/IP Address: ')
+    subprocess.run(f'''wpscan --api-token {wpscanapi} --url {target} --random-user-agent --force''')
+
 menu = Menu('''
 
  ____  _____ ___ 
@@ -122,4 +127,5 @@ menu.add_option('[+] NMAP top ports module', lambda: processtopports())
 menu.add_option('[+] NMAP os module', lambda: processos())
 menu.add_option('[+] XSS detection module', lambda: xsstest())
 menu.add_option('[+] CVE scanner (NMAP)', lambda: vulnscanmodule())
+menu.add_option('[+] Wordpress scanner (WPScan API required)', lambda: wpscanmodule())
 menu.show()
