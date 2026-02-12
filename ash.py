@@ -2,6 +2,7 @@ import getpass
 import os
 import subprocess
 import requests
+import threading
 
 from pymenu import Menu
 from pymetasploit3.msfrpc import MsfRpcClient
@@ -77,6 +78,20 @@ def nightmare():
     else:
         print('[+] Success: ' + data['message'])
 
+
+
+def dirbrute():
+    target = input('[+] Target URL/IP Address: ')
+    wordlist = input('[+] Wordlist: ')
+    with open(wordlist, 'r') as f:
+        for line in f.readlines():
+            print(f'[+] Checking {target}{line}')
+            response = requests.get(target + line)
+            if response.status_code == 200:
+                print('[+] Success: ' + str(response.status_code))
+            else:
+                print('[+] Error HTTP code: ' + str(response.status_code))
+
 menu = Menu('''
 
     _    ____  _   _ 
@@ -91,4 +106,5 @@ menu.add_option('[+] Create windows payload (MSFVenom)', lambda: windowspayload(
 menu.add_option('[+] Bind windows payload (MSFVenom)', lambda: windowspayloadbind())
 menu.add_option('[+] Listen for windows payload (MSFConsole)', lambda: windowslistener())
 menu.add_option('[+] Nightmare stresser (Requires API key)', lambda: nightmare())
+menu.add_option('[+] Directory bruteforce', lambda: dirbrute())
 menu.show()
