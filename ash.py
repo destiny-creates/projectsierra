@@ -118,6 +118,16 @@ def breachdirectory():
     except EmailNotValidError as e:
         print(str(e))
 
+def shredder():
+    choice = input('[+] File (1) or Directory (2): ')
+    if choice == '1':
+        file = input('[+] File path: ')
+        print(f'[+] Shredding {file}')
+        subprocess.run(f'shred {file} -uvz', shell=True)
+    elif choice == '2':
+        directory = input('[+] Directory path: ')
+        print(f'[+] Shredding {directory}')
+        subprocess.run(f'find {directory} -type f -exec shred -uvz' + ''' {} \;''', shell=True)
 
 menu = Menu('''
 
@@ -133,6 +143,7 @@ menu.add_option('[+] Create windows payload (MSFVenom)', lambda: windowspayload(
 menu.add_option('[+] Bind windows payload (MSFVenom)', lambda: windowspayloadbind())
 menu.add_option('[+] Listen for windows payload (MSFConsole)', lambda: windowslistener())
 menu.add_option('[+] Nightmare stresser (Requires API key)', lambda: nightmare())
-menu.add_option('[+] Email/username leaked password lookup', lambda: breachdirectory())
+menu.add_option('[+] Email/username leaked password lookup (breachdirectory)', lambda: breachdirectory())
 menu.add_option('[+] Directory bruteforce', lambda: dirbrute())
+menu.add_option('[+] Secure file erasure tool (shred)', lambda: shredder())
 menu.show()
