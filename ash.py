@@ -2,12 +2,13 @@ import getpass
 import os
 import subprocess
 import requests
-import threading
+from email_validator import validate_email, EmailNotValidError
 
 from pymenu import Menu
 from pymetasploit3.msfrpc import MsfRpcClient
 
 nightmarekey = ''
+breachdirectorykey = ''
 
 def CVE20262461():
     selector = input('[+] Single or multiple: ')
@@ -92,6 +93,32 @@ def dirbrute():
             else:
                 print('[+] Error HTTP code: ' + str(response.status_code))
 
+def breachdirectory():
+    email = input('[+] Email Address or username: ')
+    try:
+        validated_email = validate_email(email, check_deliverability=False)
+        if validated_email:
+            print(f'\n[+] Checking BreachDirectory...')
+            url = 'https://breachdirectory.p.rapidapi.com/'
+            querystring = {'func': 'auto', 'term': f'{validated_email}'}
+            headers = {
+                'x-rapidapi-key': breachdirectorykey,
+                'x-rapidapi-host': 'breachdirectory.p.rapidapi.com'
+            }
+            response = requests.get(url, headers=headers, params=querystring)
+            data = response.json()
+            if data['found'] == 0:
+                print('[+] No Data Found!')
+            else:
+                for result in data['result']:
+                    print(f'[+] Email : {result['email']}')
+                    print(f'[+] Password : {result['password']}')
+                    print(f'[+] SHA1: {result["sha1"]}')
+                    print(f'[+] Hash: {result["hash"]}')
+    except EmailNotValidError as e:
+        print(str(e))
+
+
 menu = Menu('''
 
     _    ____  _   _ 
@@ -106,5 +133,6 @@ menu.add_option('[+] Create windows payload (MSFVenom)', lambda: windowspayload(
 menu.add_option('[+] Bind windows payload (MSFVenom)', lambda: windowspayloadbind())
 menu.add_option('[+] Listen for windows payload (MSFConsole)', lambda: windowslistener())
 menu.add_option('[+] Nightmare stresser (Requires API key)', lambda: nightmare())
+menu.add_option('[+] Email/username leaked password lookup', lambda: breachdirectory())
 menu.add_option('[+] Directory bruteforce', lambda: dirbrute())
 menu.show()
