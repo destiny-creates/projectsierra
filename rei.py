@@ -3,6 +3,7 @@ import subprocess
 
 import nmap3
 import requests
+from bs4 import BeautifulSoup
 from pymenu import Menu
 
 # Variables and API keys
@@ -10,6 +11,7 @@ from pymenu import Menu
 nmap = nmap3.Nmap()
 dnsdumpsterapi = ''
 wpscanapi = ''
+
 
 def processdumpster(data):
     for item in data:
@@ -107,9 +109,73 @@ def vulnscanmodule():
     target = input('[+] Target URL/IP Address: ')
     subprocess.run(f'''nmap --script vuln --script-args mincvss+5.0 {target}''', shell=True)
 
+
 def wpscanmodule():
     target = input('[+] Target URL/IP Address: ')
     subprocess.run(f'''wpscan --api-token {wpscanapi} --url {target} --random-user-agent --force''')
+
+
+def idcrawlmodule():
+    first = input('[+] First Name: ')
+    last = input('[+] Last Name: ')
+    print('[+] Searching for: ' + first + ' ' + last + '\n')
+    uagent = '''Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0'''
+    url = f'''https://www.idcrawl.com/{first}-{last}'''
+    request = requests.get(url, headers={'User-Agent': uagent, 'Accept': '*/*'})
+    soup = BeautifulSoup(request.content, 'html.parser')
+    instagram = soup.select('#gl-accordion-instagram-details .i > .w > .c.p a')
+    twitter = soup.select('#gl-accordion-twitter-details .i > .w > .c.p a')
+    facebook = soup.select('#gl-accordion-facebook-details .i > .w > .c.p a')
+    tiktok = soup.select('#gl-accordion-tiktok-details .i > .w > .c.p a')
+    youtube = soup.select('#gl-accordion-youtube-details .i > .w > .c.p a')
+    usernames = soup.select('#gl-accordion-usernames-details .i > .w')
+
+    print(f'[+] Found {len(instagram)} instagrams\n')
+    for item in instagram:
+        if item['href'].startswith('https://www.instagram.com/'):
+            print('[+] Username: ' + item.text)
+            print('[+] Link: ' + item['href'])
+            print('-----------------------')
+
+    print(f'\n[+] Found {len(twitter)} Twitters\n')
+
+    for item in twitter:
+        if item['href'].startswith('https://twitter.com/'):
+            print('[+] Username: ' + item.text)
+            print('[+] Link: ' + item['href'])
+            print('-----------------------')
+
+    print(f'\n[+] Found {len(facebook)} Facebooks\n')
+
+    for item in facebook:
+        if item['href'].startswith('https://www.facebook.com/'):
+            print('[+] Username: ' + item.text)
+            print('[+] Link: ' + item['href'])
+            print('-----------------------')
+
+    print(f'\n[+] Found {len(tiktok)} Tiktoks\n')
+
+    for item in tiktok:
+        if item['href'].startswith('https://www.tiktok.com/'):
+            print('[+] Username: ' + item.text)
+            print('[+] Link: ' + item['href'])
+            print('-----------------------')
+
+    print(f'\n[+] Found {len(youtube)} YouTube channels\n')
+
+    for item in youtube:
+        if item['href'].startswith('https://www.youtube.com/'):
+            print('[+] Username: ' + item.text)
+            print('[+] Link: ' + item['href'])
+            print('-----------------------')
+    print(f'\n[+] Found {len(usernames)} possible usernames\n')
+    for item in usernames:
+        if item.text == ' Show all results... ':
+            continue
+        else:
+            print('[+] Username: ' + item.text)
+            print('-----------------------')
+
 
 menu = Menu('''
 
@@ -128,4 +194,5 @@ menu.add_option('[+] NMAP os module', lambda: processos())
 menu.add_option('[+] XSS detection module', lambda: xsstest())
 menu.add_option('[+] CVE scanner (NMAP)', lambda: vulnscanmodule())
 menu.add_option('[+] Wordpress scanner (WPScan API required)', lambda: wpscanmodule())
+menu.add_option('[+] IDcrawl.me module', lambda: idcrawlmodule())
 menu.show()
