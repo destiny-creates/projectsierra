@@ -21,9 +21,10 @@ print('''
 |_| \_\_____|___|
 
 ''')
-print('REI Recon, at your service\n')
-target = input('[+] Target domain:')
+print('[+] REI Recon, at your service\n')
+target = input('[+] Target domain/IP:')
 path = input('[+] Path to domain wordlist (enter to skip gobuster test)')
+
 
 def processdumpster(data):
     for item in data:
@@ -39,6 +40,9 @@ def processdumpster(data):
 def dumpster():
     if dnsdumpsterapi == '':
         print('[+] DNSdumpster API key missing, skipping test.')
+        pass
+    elif target.startswith('https://') or target.startswith('http://'):
+        print('[+] Invalid target (remove the https/http), skipping test.')
         pass
     else:
         url = f'https://api.dnsdumpster.com/domain/{target}'
@@ -88,6 +92,8 @@ def processtopports(target):
         print('[+] State: ' + port['state'])
         print('[+] Service: ' + port['service']['name'])
         print('-----------------------')
+
+
 def processos(target):
     os_results = nmap.nmap_os_detection(target)
     ip_address = next(iter(os_results))
@@ -99,6 +105,8 @@ def processos(target):
         print('[+] Generation: ' + item['osclass']['osgen'])
         print('[+] Accuracy: ' + item['accuracy'])
         print('-----------------------')
+
+
 def xsstest(target):
     url = f'https://www.{target}/search?'
     payloads = ['<script>alert(1)</script>', '"><img src=x onerror=alert(1)>']
@@ -110,9 +118,11 @@ def xsstest(target):
         else:
             print(f'[XSS] Not vulnerable to payload: {payload}')
 
+
 def vulnscanmodule(target):
     subprocess.run(f'''nmap --script vuln --script-args mincvss+5.0 {target}''', shell=True)
     print('-----------------------')
+
 
 def wpscanmodule(target):
     if wpscanapi == '':
@@ -122,20 +132,20 @@ def wpscanmodule(target):
         subprocess.run(f'''wpscan --api-token {wpscanapi} --url {target} --random-user-agent --force''', shell=True)
         print('-----------------------')
 
+
 def nucleitest(target):
     print(f'[+] This module saves data to nuclei_results_{target}.txt')
     subprocess.run(f'''nuclei -u {target} -o nuclei_results_{target}.txt''', shell=True)
     print('-----------------------')
 
+
 def gobustertest(target):
     if path == '':
-            pass
+        pass
     else:
         print(f'[+] This module saves data to gobuster_results_{target}.txt')
         subprocess.run(f'''gobuster dir -u {target} -w {path} -o gobuster_results_{target}.txt''', shell=True)
         print('-----------------------')
-
-
 
 
 def main():
@@ -155,7 +165,12 @@ def main():
     xsstest(target)
     print('\n[+] Running WPScan module\n')
     wpscanmodule(target)
+    print('\n[+] Running Gobuster module\n')
+    gobustertest(target)
+    print('\n[+] Running Nuclei module\n')
+    nucleitest(target)
     print('\n[+] Happy hunting :)')
+
 
 if __name__ == '__main__':
     main()
