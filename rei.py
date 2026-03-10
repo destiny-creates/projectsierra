@@ -208,7 +208,7 @@ menu = Menu('''
 |  _ <| |___ | | 
 |_| \_\_____|___|
 
-\nREI recon, at your service''')
+\n[+] REI recon, at your service''')
 menu.add_option('[+] DNS dumpster module', lambda: dumpster())
 menu.add_option('[+] NMAP DNS module', lambda: processdns())
 menu.add_option('[+] NMAP version detection module', lambda: processversion())
