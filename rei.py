@@ -183,6 +183,7 @@ def idcrawlmodule():
             print('[+] Username: ' + item.text)
             print('-----------------------')
 
+
 def nucleitest():
     target = input('[+] Target URL: ')
     print(f'[+] This module saves data to nuclei_results_{target}.txt')
@@ -199,6 +200,7 @@ def gobustertest():
         print(f'[+] This module saves data to gobuster_results_{target}.txt')
         subprocess.run(f'''gobuster dir -u {target} -w {path} -o gobuster_results_{target}.txt''', shell=True)
         print('-----------------------')
+
 
 menu = Menu('''
 
