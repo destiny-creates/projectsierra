@@ -26,21 +26,28 @@ def processdumpster(data):
 
 def dumpster():
     target = input('[+] Target domain:')
-    url = f'https://api.dnsdumpster.com/domain/{target}'
-    headers = {'X-Api-Key': dnsdumpsterapi}
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
+    if dnsdumpsterapi == '':
+        print('[+] DNSdumpster API key missing, skipping test.')
+        pass
+    elif target.startswith('https://') or target.startswith('http://'):
+        print('[+] Invalid target (remove the https/http), skipping test.')
         pass
     else:
-        print('Error connecting to DNSdumpster.')
-        exit()
-    data = response.json()
-    print('\n[+] A records:\n')
-    processdumpster(data['a'])
-    print('[+] MX records:\n')
-    processdumpster(data['mx'])
-    print('[+] NS records:\n')
-    processdumpster(data['ns'])
+        url = f'https://api.dnsdumpster.com/domain/{target}'
+        headers = {'X-Api-Key': dnsdumpsterapi}
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            pass
+        else:
+            print('Error connecting to DNSdumpster.')
+            exit()
+        data = response.json()
+        print('\nA records:\n')
+        processdumpster(data['a'])
+        print('MX records:\n')
+        processdumpster(data['mx'])
+        print('NS records:\n')
+        processdumpster(data['ns'])
 
 
 def processdns():
@@ -176,6 +183,22 @@ def idcrawlmodule():
             print('[+] Username: ' + item.text)
             print('-----------------------')
 
+def nucleitest():
+    target = input('[+] Target URL: ')
+    print(f'[+] This module saves data to nuclei_results_{target}.txt')
+    subprocess.run(f'''nuclei -u {target} -o nuclei_results_{target}.txt''', shell=True)
+    print('-----------------------')
+
+
+def gobustertest():
+    target = input('[+] Target URL: ')
+    path = input('[+] Path to wordlist: ')
+    if path == '':
+        pass
+    else:
+        print(f'[+] This module saves data to gobuster_results_{target}.txt')
+        subprocess.run(f'''gobuster dir -u {target} -w {path} -o gobuster_results_{target}.txt''', shell=True)
+        print('-----------------------')
 
 menu = Menu('''
 
@@ -195,4 +218,6 @@ menu.add_option('[+] XSS detection module', lambda: xsstest())
 menu.add_option('[+] CVE scanner (NMAP)', lambda: vulnscanmodule())
 menu.add_option('[+] Wordpress scanner (WPScan API required)', lambda: wpscanmodule())
 menu.add_option('[+] IDcrawl.me module', lambda: idcrawlmodule())
+menu.add_option('[+] Nuclei module', lambda: nucleitest())
+menu.add_option('[+] Gobuster module', lambda: gobustertest())
 menu.show()
