@@ -1,0 +1,2 @@
+dnsdumpsterapi = ''
+wpscanapi = ''
